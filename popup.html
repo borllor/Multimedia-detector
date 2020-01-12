@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            width: 760px;
+            max-height: 600px;
+            overflow: auto;
+            padding: 0;
+            margin: 0;
+        }
+
+        button {
+            display: none;
+            width: 720px;
+            height: 20px;
+            margin: 20px auto;
+        }
+
+        #urlCollector {
+            margin: 20px auto;
+            display: block;
+            width: 720px;
+            outline: none;
+        }
+
+        .outter {
+            display: block;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="outter">
+        <div id="urlCollector"></div>
+        <button id="changeColor">ChangeColor</button>
+    </div>
+    <script src="libs/core/md5.js"></script>
+    <script src="libs/core/extender.js"></script>
+    <script src="libs/core/utils.js"></script>
+    <script src="libs/core/framework.js"></script>
+    <script src="libs/setting.js"></script>
+    <script src="libs/model/Res.js"></script>
+    <script src="libs/model/TabReses.js"></script>
+    <script src="libs/model/Tab.js"></script>
+    <script src="libs/model/Tabs.js"></script>
+    <script src="libs/model/WindowRoot.js"></script>
+    <script src="libs/filtrer/FilterExtension.js"></script>
+    <script src="libs/filtrer/FilterExtensionManager.js"></script>
+    <script src="libs/youtube/model/ColorInfo.js"></script>
+    <script src="libs/youtube/model/TimeRange.js"></script>
+    <script src="libs/youtube/model/StreamingDataFormat.js"></script>
+    <script src="libs/youtube/model/StreamingDataAdaptiveFormat.js"></script>
+    <script src="libs/youtube/model/StreamingData.js"></script>
+    <script src="libs/youtube/model/VideoThumbnail.js"></script>
+    <script src="libs/youtube/model/VideoDetail.js"></script>
+    <script src="libs/youtube/model/VideoCaption.js"></script>
+    <script src="libs/youtube/model/YoutubeVideoResource.js"></script>
+    <script src="libs/youtube/YoutubeDashboard.js"></script>
+    <script src="libs/general/GeneralDashboard.js"></script>
+    <script src="popup.js"></script>
+</body>
+
+</html>
