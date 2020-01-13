@@ -1,10 +1,10 @@
 'use strict';
 
 var currentWindowTab = null;
+var windowRoot = null;
 chrome.runtime.onInstalled.addListener(function () {
-    setUrlCollectorVal(new WindowRoot(), function () {
-        logMsg("init WindowRoot object!");
-    });
+    windowRoot = new WindowRoot();
+
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
         chrome.declarativeContent.onPageChanged.addRules([{
             conditions: [
@@ -26,17 +26,28 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     logMsg("tab " + tabId + " is updated, changeInfo: " + changeInfo.toString());
     if (changeInfo["status"] === "loading" && !changeInfo["url"]) {
         clearScene();
-        logMsg("the tab " + tabId + " is initialized");
+        clearTabData(tabId);
     }
+    let changed = false;
+    let t = ensureTabExists(tabId);
+    if (changeInfo["url"]) {
+        t.setUrl(changeInfo["url"]);
+        changed = true;
+    }
+    if (changeInfo["title"]) {
+        t.setTitle(changeInfo["title"]);
+        changed = true;
+    }
+    if (changed) dataChangedNotification();
 });
 
 chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
     currentWindowTab = null;
-    logMsg("tab " + tabId + " is removed, changeInfo: " + removeInfo.toString());
+    logMsg("tab " + tabId + " is removed, removeInfo: " + removeInfo.toString());
     clearTabData(tabId);
 });
 
-//onAttached, onDetached, onHighlighted
+//onAttached, onDetached
 chrome.tabs.onReplaced.addListener(function (addedTabId, removedTabId) {
     logMsg("tab " + removedTabId + " is replaced, the new TabId: " + addedTabId);
     clearTabData(removedTabId);
@@ -55,13 +66,24 @@ chrome.tabs.onActivated.addListener(function (activeInfo) {
     if (setting.switchType === "current") {
         clearScene();
     }
-    reloadData();
+    freshScene();
 });
 chrome.history.onVisited.addListener(function (historyItem) {
     logMsg("historyItem: " + historyItem.toString());
-    if (historyItem && historyItem.url) {
-        filterUrl(currentWindowTab.id, historyItem.url);
+    let changed = false;
+    let tabId = currentTabId.id;
+    let t = ensureTabExists(tabId);
+    if (historyItem["url"]) {
+        clearTabData(tabId);
+        t.setUrl(historyItem["url"]);
+        changed = true;
+        filterUrl(historyItem["url"], tabId)
     }
+    if (historyItem["title"]) {
+        t.setTitle(historyItem["title"]);
+        changed = true;
+    }
+    if (changed) dataChangedNotification();
 });
 chrome.webRequest.onBeforeRequest.addListener(
     function (request) {
@@ -77,23 +99,15 @@ function filterUrl(tabId, url) {
     let filterExtension = FilterExtensionManager.get(urlMetaData);
     if (filterExtension && filtered(urlMetaData, filterExtension)) {
         logMsg("detecting a url: " + url);
-        getUrlCollectorVal(function (data) {
-            let windowRoot = data;
-            if (!windowRoot) { windowRoot = new WindowRoot(); }
-            let tab = windowRoot.getTab(tabId);
-            if (!tab) {
-                tab = new Tab(tabId, (currentWindowTab.url || url), (currentWindowTab.title || ""));
-                windowRoot.pushTab(tab);
+        let tab = ensureTabExists(tabId);
+        let parser = new window[filterExtension.getName() + "ResourceParser"](tab);
+        if (!parser) return;
+        parser.load(url, function () {
+            tab = this;
+            if (tab.getResCount()) {
+                dataChangedNotification();
+                logMsg("sum up to add reses, " + tab.getResCount());
             }
-            let parser = new window[filterExtension.getName() + "ResourceParser"](tab);
-            if (!parser) return;
-            parser.load(url, function () {
-                tab = this;
-                if (tab.getResCount()) {
-                    logMsg("sum up to add reses, " + tab.getResCount());
-                }
-            });
-            saveWindowRoot(windowRoot);
         });
     }
 }
@@ -119,32 +133,35 @@ function filtered(urlMetaData, filterExtension) {
 }
 function clearScene() {
     chrome.browserAction.setBadgeText({ text: "" });
-    copyTextToClipboard(document, "");
+}
+function freshScene() {
+    setBadgeText();
 }
 function clearTabData(tabId) {
-    getUrlCollectorVal(function (data) {
-        let windowRoot = data;
-        windowRoot.clearTabData(tabId);
-        saveWindowRoot(windowRoot);
-    });
+    windowRoot.clearTabData(tabId);
 }
-function reloadData() {
-    getUrlCollectorVal(function (data) {
-        let windowRoot = data;
-        setBadgeText(windowRoot);
-        copyResourceUrlToClipboard(document, windowRoot);
-    });
+function dataChangedNotification(callback) {
+    freshScene();
+    sendMessageToView();
 }
-function saveWindowRoot(windowRoot, callback) {
-    setUrlCollectorVal(windowRoot, function () {
-        setBadgeText(windowRoot);
-        if (setting.isAutoCopyingResourceToClipboard) {
-            copyResourceUrlToClipboard(document, windowRoot);
-        }
-        if (callback) callback.call(windowRoot);
+function sendMessageToView() {
+    var views = chrome.extension.getViews({
+        type: "popup"
     });
+    if (views != null && views.length > 0 && views[0]["popupName"] === "dashboardPopup") {
+        views[0].showUrlCollectorValue(windowRoot, currentWindowTab.id);
+    }
 }
-function setBadgeText(windowRoot) {
+function ensureTabExists(tabId) {
+    if (!windowRoot) { windowRoot = new WindowRoot(); }
+    let tab = windowRoot.getTab(tabId);
+    if (!tab) {
+        tab = new Tab(tabId);
+        windowRoot.pushTab(tab);
+    }
+    return tab;
+}
+function setBadgeText() {
     getTabIdBySetting(function (tabId) {
         let resourceCount = windowRoot.getTabResCount(tabId);
         if (resourceCount <= 0) {
@@ -153,15 +170,5 @@ function setBadgeText(windowRoot) {
         }
         var badgeText = resourceCount > setting.limitedBadgeNumber ? (setting.limitedBadgeNumber + "+") : (resourceCount + "")
         chrome.browserAction.setBadgeText({ text: badgeText });
-    });
-}
-
-function copyResourceUrlToClipboard(document, windowRoot) {
-    let summary = "";
-    getTabIdBySetting(function (tabId) {
-        windowRoot.foreachTabRes(function () {
-            summary = summary + this.getUrl() + "\r\n";
-        }, tabId);
-        copyTextToClipboard(document, summary);
     });
 }

@@ -1,16 +1,22 @@
 'use strict'
 
+
 function FilterExtensionManager() {
 }
-FilterExtensionManager.get = function (urlMetaData) {
+FilterExtensionManager.default;
+
+FilterExtensionManager._init = function () {
+    FilterExtensionManager.default = FilterExtensionManager.convertToFilterExtension(setting.filterExtensions["General"]);
+}
+FilterExtensionManager.get = function (urlOrMetaData) {
     /* filterExtensions comes from setting config of filterExtensions field */
     let filterExtensions = setting.filterExtensions;
     let urlInfo = null;
-    if (!urlMetaData) return null;
-    if (typeof (urlMetaData) === "string") {
-        urlInfo = parseURL(urlMetaData);
+    if (!urlOrMetaData) return null;
+    if (typeof (urlOrMetaData) === "string") {
+        urlInfo = parseURL(urlOrMetaData);
     } else {
-        urlInfo = urlMetaData;
+        urlInfo = urlOrMetaData;
     }
     let filterExtension = null;
     if (urlInfo) {
@@ -29,4 +35,4 @@ FilterExtensionManager.convertToFilterExtension = function (fx) {
         fx["message"]);
     return filterExtension;
 }
-
+FilterExtensionManager._init();

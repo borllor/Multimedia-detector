@@ -1,7 +1,8 @@
 {
-    "name": "Youtube Detector",
-    "version": "1.0",
-    "description": "It is used to detecting youtube video resource.",
+    "name": "Multimedia detector",
+    "version": "1.5",
+    "author": "Borllor Li",
+    "description": "It is used to detecting media multimedia resource.",
     "permissions": [
         "declarativeContent",
         "storage",
@@ -32,5 +33,6 @@
         "48": "images/get_started48.png",
         "128": "images/get_started128.png"
     },
-    "manifest_version": 2
+    "manifest_version": 2,
+    "homepage_url": "https://github.com/borllor"
 }

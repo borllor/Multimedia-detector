@@ -89,7 +89,7 @@ YoutubeResourceParser.prototype.parseGetVideoInfoResponse = function (response) 
             : "";
 
         // Add to dictionary
-        map.set(key, value.replace("\u0026", "&").replaceAll("+", " "));
+        map.set(key, value.replaceAll("\u0026", "&").replaceAll("+", " "));
     }
     return map;
 }

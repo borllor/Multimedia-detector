@@ -4,46 +4,38 @@
 
 'use strict';
 
+this.popupName = "dashboardPopup"
 let urlCollectorCanvas = document.getElementById('urlCollector');
-
 // When you click the extension app icon to loading the popup.html, 
-// then display urlCollector value.
-getUrlCollectorVal(function (data) {
-    showUrlCollectorValue(data);
-});
+// then display resources.
+function init() {
+    var bgPage = chrome.extension.getBackgroundPage();
+    bgPage.sendMessageToView();
+}
+init();
 
-chrome.storage.onChanged.addListener(function (changes, namespace) {
-    for (let key in changes) {
-        if (key === UrlCollectorStorageName) {
-            // When capturing a new url, print it.
-            let windowRoot = changes[key].newValue;
-            showUrlCollectorValue(assignType(windowRoot));
-            logMsg("chrome's storage has changed")
-        }
-    }
-});
-
-function showUrlCollectorValue(windowRoot) {
+function showUrlCollectorValue(windowRoot, tabId) {
     let elm = document.getElementById("urlCollector");
     let hasContent = false;
     if (windowRoot) {
         let summary = "";
-        let url = "";
-        getTabIdBySetting(function (currentTabId) {
-            let tab = windowRoot.getTab(currentTabId);
-            if (!tab["_url"]) return;
-            url = tab.getUrl();
-            let urlMetaData = parseURL(url);
-            let filterExtension = FilterExtensionManager.get(urlMetaData);
-            let dashboard = new window[filterExtension.getName() + "Dashboard"](tab);
-            if (!dashboard) return;
-            dashboard.handleResContent(function (resContent) {
-                summary = summary + resContent + "<hr />";
-            });
-            hasContent = true;
-            summary = dashboard.getSummary() + summary;
-            if (elm) elm.innerHTML = summary;
+        let message = "";
+        let filterExtension = FilterExtensionManager.default;
+        let tab = windowRoot.getTab(tabId);
+        if (tab["_url"]) {
+            filterExtension = FilterExtensionManager.get(tab.getUrl());
+        }
+        if (filterExtension.getMessage()) {
+            message = "<b><i style='color:red'>" + filterExtension.getMessage() + "</i></b><hr/>";
+        }
+        let dashboard = new window[filterExtension.getName() + "Dashboard"](tab);
+        if (!dashboard) return;
+        dashboard.handleResContent(function (resContent) {
+            summary = summary + resContent + "<hr />";
         });
+        hasContent = true;
+        summary = dashboard.getSummary() + message + summary;
+        if (elm) elm.innerHTML = summary;
         if (!hasContent) elm.innerHTML = "";
     }
 }
