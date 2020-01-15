@@ -12,6 +12,7 @@ Version 1.
 2. Can display the video and audio resource.
 3. Developing base on M3U8-Detector.
 4. How to merge video and audio and why to separate a resource to video and audio.
+5. Support different website addresses in the same parser and dashboard object. 
 
 Version 1.5
 
