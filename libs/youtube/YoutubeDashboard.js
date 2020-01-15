@@ -1,16 +1,20 @@
 'use strict'
 
 function YoutubeDashboard(tab) {
-    this.tab = tab;
+    this._tab = tab;
+}
+YoutubeDashboard.prototype.getTab = function () {
+    return this._tab;
 }
 YoutubeDashboard.prototype.getSummary = function (callback) {
+    let tab = this.getTab();
     let videoCount = 0;
     let audioCount = 0;
     let title = "";
     let url = "";
-    if (this.tab["_title"]) title = this.tab.getTitle();
-    if (this.tab["_url"]) url = this.tab.getUrl();
-    this.tab.foreachRes(function () {
+    if (tab["_title"]) title = tab.getTitle();
+    if (tab["_url"]) url = tab.getTabUrl();
+    tab.foreachRes(function () {
         let res = this;
         if (res.getMediaType() === "video") videoCount++;
         else if (res.getMediaType() === "audio") audioCount++;
@@ -21,7 +25,8 @@ YoutubeDashboard.prototype.getSummary = function (callback) {
 }
 
 YoutubeDashboard.prototype.handleResContent = function (callback) {
-    this.tab.foreachRes(function () {
+    let tab = this.getTab();
+    tab.foreachRes(function () {
         let res = this;
         let builder = "";
         let adaptiveFormat = res.getExt();

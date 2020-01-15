@@ -29,6 +29,8 @@ FilterExtensionManager.get = function (urlOrMetaData) {
 }
 FilterExtensionManager.convertToFilterExtension = function (fx) {
     let filterExtension = new FilterExtension(fx["name"],
+        fx["parserClassName"],
+        fx["dashboardClassName"],
         fx["pathFilter"],
         fx["filterMatchingType"],
         fx["ignoreCase"],

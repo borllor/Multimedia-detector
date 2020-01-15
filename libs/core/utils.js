@@ -95,3 +95,13 @@ function parseURL(url) {
         path: parser.pathname + parser.search + parser.hash
     };
 }
+
+function hasProperty(obj, p) {
+    let b = false;
+    try {
+        b = obj.hasOwnProperty(p);
+    } catch (e) {
+        console.log(e);
+    }
+    return b;
+}

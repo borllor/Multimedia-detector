@@ -1,11 +1,12 @@
 'use strick'
 
 function GeneralResourceParser(tab) {
-    this.tab = tab;
+    this._tab = tab;
 }
 GeneralResourceParser.prototype.load = function (url, callback) {
+    let tab = this._tab;
     let res = new Res(url, "video", null);
-    this.tab.pushRes(res);
+    tab.pushRes(res);
     logMsg("add a new res, " + res.toString());
-    if (callback) callback.call(this.tab);
+    if (callback) callback.call(tab);
 }

@@ -7,8 +7,7 @@ function TabReses() {
 }
 TabReses.prototype.get = function (res) {
     for (let i = 0; i < this._col.length; i++) {
-        if (this._col[i].getHash() === res.getHash()
-            && this._col[i].getUrl() === res.getUrl()) {
+        if (this._col[i].getHash() === res.getHash()) {
             return this._col[i];
         }
     }

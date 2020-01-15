@@ -46,8 +46,8 @@ function getTabIdBySetting(callback) {
         let query = { active: true, lastFocusedWindow: true };
         chrome.tabs.query(query, function (tabs) {
             if (tabs && tabs.length > 0) {
-                let currentTab = tabs[0];
-                if (callback) callback.call(currentTab, currentTab.id)
+                let t = tabs[0];
+                if (callback) callback.call(t, t.id)
             }
         });
     }
@@ -57,6 +57,12 @@ function getWindowTabByTabId(tabId, callback) {
         callback.call(tab);
     });
 }
-function logMsg(msg) {
-    console.log(msg);
+
+var logCounter = 1;
+function logMsg(msg, style) {
+    if (style) {
+        console.log("%c" + (logCounter++) + ". " + msg, style);
+    } else {
+        console.log((logCounter++) + ". " + msg);
+    }
 }

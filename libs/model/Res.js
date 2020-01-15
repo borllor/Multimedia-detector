@@ -4,7 +4,7 @@ function Res(url, mediaType, ext) {
     this._url = url;
     this._ext = ext;
     this._mediaType = mediaType;
-    this._hash = CryptoJS.MD5(url);
+    this._hash = md5(url);
     this.__type = "Res";
 }
 Res.prototype.getUrl = function () {

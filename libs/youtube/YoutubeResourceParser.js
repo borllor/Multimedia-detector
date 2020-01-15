@@ -4,24 +4,26 @@
 const PatternUrl = "https://youtube.com/get_video_info?video_id={0}&el=embedded&eurl=https://youtube.googleapis.com/v/{0}&hl=en";
 
 function YoutubeResourceParser(tab) {
-    this.tab = tab;
+    this._tab = tab;
+}
+YoutubeResourceParser.prototype.getTab = function () {
+    return this._tab;
 }
 YoutubeResourceParser.prototype.load = function (url, callback) {
-    let tab = this.tab;
+    let tab = this.getTab();
     let realUrl = PatternUrl.format(this.getVideoId(url));
     let _this = this;
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-            console.log("loading youtube resource successful!");
+            logMsg("loading youtube resource successful!, url: " + url);
             let playerResponse = _this.parseResponse(this.responseText);
 
             let adaptiveFormats = playerResponse.streamingData.adaptiveFormats;
             if (adaptiveFormats != null && adaptiveFormats.length > 0) {
-                //initialize tab data.
-                tab.clearData();
-                tab.setTitle(playerResponse.videoDetail.title);
-                tab.setUrl(url);
+                //clear tab resource and set tab data.
+                tab.clearRes();
+                tab.setUrl(realUrl);
                 tab.setData(playerResponse);
 
                 for (let i = 0; i < adaptiveFormats.length; i++) {

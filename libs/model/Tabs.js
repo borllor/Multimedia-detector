@@ -14,6 +14,14 @@ Tabs.prototype.get = function (tabId) {
     }
     return null;
 }
+Tabs.prototype.removeTab = function (tabId) {
+    for (let i = 0; i < this._col.length; i++) {
+        if (this._col[i].getTabId() === tabId) {
+            return this._col.splice(i, 1);
+        }
+    }
+    return null;
+}
 Tabs.prototype.getCol = function () {
     return this._col;
 }
@@ -66,6 +74,13 @@ Tabs.prototype.pushRes = function (tabId, res) {
         return t.pushRes(res);
     }
     return false;
+}
+Tabs.prototype.clearTabRes = function (tabId) {
+    let t = this.get(tabId);
+    if (t) {
+        return t.clearRes();
+    }
+    return null;
 }
 Tabs.prototype.clearTabData = function (tabId) {
     let t = this.get(tabId);

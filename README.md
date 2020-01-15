@@ -5,19 +5,25 @@ I always want to develop a plugin(maybe chrome extension) or software to downloa
 But I am now in NZ, the rhythm of living make me having more time and energy to encourage developing my favorite.
 
 Starting date: 08 Jan 2019.
+
 Version 1.
+
 1. Analysis of the principle Youtube video playing.
 2. Can display the video and audio resource.
 3. Developing base on M3U8-Detector.
 4. How to merge video and audio and why to separate a resource to video and audio.
 
 Version 1.5
+
 1. Create a button under the player of youtube watching page for downloading the video.
 2. Open codebase.
 3. Reinforce more functionalities for detecting other websites and multimedia resources.
 
 Version 2.0
-1. Make a video of how to develop and download video, especially introduce the separation of video and audio.  
+
+1. Setting can be configured with an option page.
+2. Can load external Dashboard class and Parser class by loading files or code at runtime.
+3. Make a video of how to develop and download video, especially introduce the separation of video and audio. 
 
 
 Note:

@@ -1,7 +1,9 @@
 'use strict'
 
-function FilterExtension(name, pathFilter, filterMatchingType, ignoreCase, message) {
+function FilterExtension(name, parserClassName, dashboardClassName, pathFilter, filterMatchingType, ignoreCase, message) {
     this._name = name || "";
+    this._parserClassName = parserClassName || "";
+    this._dashboardClassName = dashboardClassName || "";
     this._pathFilter = pathFilter || [];
     this._filterMatchingType = filterMatchingType || "text";
     this._ignoreCase = ignoreCase || true;
@@ -12,6 +14,20 @@ FilterExtension.prototype.getName = function () {
 }
 FilterExtension.prototype.setName = function (name) {
     this._name = name;
+    return this;
+}
+FilterExtension.prototype.getParserClassName = function () {
+    return this._parserClassName;
+}
+FilterExtension.prototype.setParserClassName = function (parserClassName) {
+    this._parserClassName = parserClassName;
+    return this;
+}
+FilterExtension.prototype.getDashboardClassName = function () {
+    return this._dashboardClassName;
+}
+FilterExtension.prototype.setDashboardClassName = function (dashboardClassName) {
+    this._dashboardClassName = dashboardClassName;
     return this;
 }
 FilterExtension.prototype.getPathFilter = function () {

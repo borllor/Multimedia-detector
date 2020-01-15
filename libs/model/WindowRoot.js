@@ -7,6 +7,9 @@ function WindowRoot() {
 WindowRoot.prototype.getTab = function (tabId) {
     return this._tabs.get(tabId);
 }
+WindowRoot.prototype.removeTab = function (tabId) {
+    return this._tabs.removeTab(tabId);
+}
 WindowRoot.prototype.getTabCount = function () {
     return this._tabs.count;
 }
@@ -30,6 +33,9 @@ WindowRoot.prototype.pushTab = function (tab) {
 }
 WindowRoot.prototype.pushRes = function (tabId, res) {
     return this._tabs.pushRes(tabId, res);
+}
+WindowRoot.prototype.clearTabRes = function (tabId) {
+    return this._tabs.clearTabRes(tabId);
 }
 WindowRoot.prototype.clearTabData = function (tabId) {
     return this._tabs.clearTabData(tabId);

@@ -14,22 +14,17 @@ function init() {
 }
 init();
 
-function showUrlCollectorValue(windowRoot, tabId) {
+function showUrlCollectorValue(windowRoot, tab) {
     let elm = document.getElementById("urlCollector");
     let hasContent = false;
     if (windowRoot) {
         let summary = "";
         let message = "";
-        let filterExtension = FilterExtensionManager.default;
-        let tab = windowRoot.getTab(tabId);
-        if (tab["_url"]) {
-            filterExtension = FilterExtensionManager.get(tab.getUrl());
-        }
+        let filterExtension = tab.getFilterExtension();
+        let dashboard = tab.getDashboard();
         if (filterExtension.getMessage()) {
             message = "<b><i style='color:red'>" + filterExtension.getMessage() + "</i></b><hr/>";
         }
-        let dashboard = new window[filterExtension.getName() + "Dashboard"](tab);
-        if (!dashboard) return;
         dashboard.handleResContent(function (resContent) {
             summary = summary + resContent + "<hr />";
         });
