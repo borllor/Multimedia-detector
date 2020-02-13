@@ -11,9 +11,30 @@ let urlCollectorCanvas = document.getElementById('urlCollector');
 function init() {
     var bgPage = chrome.extension.getBackgroundPage();
     bgPage.sendMessageToView();
+    setPopupSizeAndPosition();
 }
 init();
 
+window.setInterval(function () {
+    setPopupSizeAndPosition();
+}, 100);
+
+var lastPopupWidth = 0;
+var lastPopupHeight = 0;
+function setPopupSizeAndPosition() {
+    chrome.windows.getCurrent(function (window) {
+        let width = window.width || 640;
+        let height = window.height || 480;
+        width = width / 2 - 40;
+        height = height - 40;
+        if (Math.abs(lastPopupWidth - width) > 1 || Math.abs(lastPopupHeight - height) > 1) {
+            document.body.style.width = width + "px";
+            document.body.style.height = height + "px";
+            lastPopupWidth = width;
+            lastPopupHeight = height;
+        }
+    });
+}
 function showUrlCollectorValue(windowRoot, tab) {
     let elm = document.getElementById("urlCollector");
     let hasContent = false;
